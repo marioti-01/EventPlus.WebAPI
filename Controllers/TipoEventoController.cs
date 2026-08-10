@@ -8,24 +8,24 @@ namespace EventPlus.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TipoUsuarioController : ControllerBase
+    public class TipoEventoController : ControllerBase
     {
-        private readonly ITipoUsuario _tipoUsuario;
-        public TipoUsuarioController(ITipoUsuario tipoUsuario)
+        private readonly ITipoEvento _tipoEvento;
+        public TipoEventoController(ITipoEvento tipoEvento)
         {
-            _tipoUsuario = tipoUsuario;
+            _tipoEvento = tipoEvento;
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> BuscarPorId(Guid id)
         {
-            var tipoUsuarioBuscado = await _tipoUsuario.BuscarPorId(id);
+            var tipoEventoBuscado = await _tipoEvento.BuscarPorId(id);
 
-            if (tipoUsuarioBuscado == null)
+            if (tipoEventoBuscado == null)
             {
                 return NotFound("Tipo de usuário não encontrado. ");
             }
-            return Ok(tipoUsuarioBuscado);
+            return Ok(tipoEventoBuscado);
         }
 
 
@@ -95,3 +95,4 @@ namespace EventPlus.WebAPI.Controllers
     }
 }
 
+''

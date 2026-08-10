@@ -1,4 +1,5 @@
 ﻿using EventPlus.WebAPI.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EventPlus.WebAPI.Interfaces
 {
@@ -12,6 +13,7 @@ namespace EventPlus.WebAPI.Interfaces
 
         Task Deletar(Guid id);
 
-        Task<ITipoUsuario> BuscarPorId(Guid id);
+        Task<TipoUsuario?> BuscarPorId(Guid id);
+        Task Atualizar(Guid id, TipoUsuario tipoUsuarioBuscado);
     }
 }
