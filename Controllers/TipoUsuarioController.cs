@@ -11,34 +11,48 @@ namespace EventPlus.WebAPI.Controllers
     public class TipoUsuarioController : ControllerBase
     {
         private readonly ITipoUsuario _tipoUsuario;
+
         public TipoUsuarioController(ITipoUsuario tipoUsuario)
         {
             _tipoUsuario = tipoUsuario;
         }
 
+        /// <summary>
+        /// Busca um tipo de usuário pelo seu id
+        /// </summary>
+        /// <param name="id">Id do usuário a ser buscado</param>
+        /// <returns>Status Code 200 com objeto ou 404</returns>
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> BuscarPorId(Guid id)
         {
-            var tipoUsuarioBuscado = await _tipoUsuario.BuscarPorId(id);
-
-            if (tipoUsuarioBuscado == null)
+            try
             {
-                return NotFound("Tipo de usuário não encontrado. ");
+                var tipoUsuarioBuscado = await _tipoUsuario.BuscarPorId(id);
+
+                if (tipoUsuarioBuscado == null)
+                {
+                    return NotFound("Tipo de usuário não encontrado.");
+                }
+
+                return Ok(tipoUsuarioBuscado);
             }
-            return Ok(tipoUsuarioBuscado);
+            catch (Exception erro)
+            {
+                return BadRequest(erro.Message);
+            }
         }
 
-
         /// <summary>
-        /// Lista todos os perfis de usuario
+        /// Lista todos os perfis de usuário
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Status Code 200 com a lista dos perfis de usuário ou 400</returns>
         [HttpGet]
-        public async Task<ActionResult> Listar()
+        public async Task<IActionResult> Listar()
         {
             try
             {
                 var tipos = await _tipoUsuario.Listar();
+
                 return Ok(tipos);
             }
             catch (Exception erro)
@@ -48,50 +62,74 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Cadastra um novo perfil de usuario
+        /// Cadastra um novo perfil de usuário
         /// </summary>
-        /// <param name="tipoUsuario">perfil de usuario a ser cadastrado</param>
-        /// <returns></returns>
+        /// <param name="tipoUsuario">Perfil do usuário a ser cadastrado</param>
+        /// <returns>Status Code 201 com objeto cadastrado</returns>
         [HttpPost]
-        public async Task<ActionResult> Cadastrar([FromBody] TipoUsuarioDTO dto)
+        public async Task<IActionResult> Cadastrar([FromBody] TipoUsuarioDTO dto)
         {
-            var tipoUsuario = new TipoUsuario
+            try
             {
-                IdTipoUsuario = Guid.NewGuid(),
-                Titulo = dto.Titulo
-            };
+                var tipoUsuario = new TipoUsuario
+                {
+                    Titulo = dto.Titulo
+                };
 
-            await _tipoUsuario.Cadastrar(tipoUsuario);
+                await _tipoUsuario.Cadastrar(tipoUsuario);
 
-            return StatusCode(201, tipoUsuario);
+                return StatusCode(201, tipoUsuario);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro.Message);
+            }
         }
 
+        /// <summary>
+        /// Atualiza um tipo de usuário
+        /// </summary>
+        /// <param name="id">Id do usuário a ser atualizado</param>
+        /// <param name="dto">Objeto com novas informações</param>
+        /// <returns>Status Code 200</returns>
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Atualizar(Guid id, [FromBody] TipoUsuarioDTO dto)
         {
-            var tipoUsuarioBuscado = new TipoUsuario
+            try
             {
-                Titulo = dto.Titulo
-            };
+                var tipoUsuario = new TipoUsuario
+                {
+                    Titulo = dto.Titulo
+                };
 
-            tipoUsuarioBuscado.Titulo = dto.Titulo;
-            await _tipoUsuario.Atualizar(id, tipoUsuarioBuscado);
-            return Ok(tipoUsuarioBuscado);
+                await _tipoUsuario.Atualizar(id, tipoUsuario);
+
+                return Ok(tipoUsuario);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro.Message);
+            }
         }
+
         /// <summary>
-        /// Cadastra um novo perfil de usuário
-        /// Lista todos os perfis de usuário
+        /// Remove um perfil de usuário pelo ID.
         /// </summary>
         /// <param name="id">Id do perfil a ser removido</param>
         /// <returns></returns>
-        /// 
-
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Deletar(Guid id)
         {
-            await _tipoUsuario.Deletar(id);
-            return NoContent();
+            try
+            {
+                await _tipoUsuario.Deletar(id);
+
+                return NoContent();
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro.Message);
+            }
         }
     }
 }
-

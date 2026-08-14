@@ -1,6 +1,8 @@
 using EventPlus.WebAPI.BdContextEvent;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Repositories;
+using EventPlusWebAPI.Interfaces;
+using EventPlusWebAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,7 @@ builder.Services.AddDbContext<EventContext>(options => options.UseSqlServer(buil
 // Add scoped: cria uma nova instância do repositório a cada requisição http
 // Isso garante que cada requisição tenha sua própria instância do repositório
 builder.Services.AddScoped<ITipoUsuario, TipoUsuarioRepository>();
+builder.Services.AddScoped<ITipoEvento, TipoEventoRepository>();
 
 // registra os serviços de controllers (Mapeia automaticamente aos controllers da pasta /controller)
 builder.Services.AddControllers();

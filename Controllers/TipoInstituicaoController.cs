@@ -7,13 +7,13 @@ namespace EventPlusWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TipoEventoController : ControllerBase
+    public class TipoInstituicaoController : ControllerBase
     {
-        private readonly ITipoEvento _tipoEvento;
+        private readonly IInstituicao _instituicao;
 
-        public TipoEventoController(ITipoEvento tipoEvento)
+        public TipoInstituicaoController(IInstituicao instituicao)
         {
-            _tipoEvento = tipoEvento;
+            _instituicao = instituicao;
         }
 
         [HttpGet]
@@ -21,7 +21,7 @@ namespace EventPlusWebAPI.Controllers
         {
             try
             {
-                var tipos = await _tipoEvento.Listar();
+                var tipos = await _instituicao.Listar();
 
                 return Ok(tipos);
             }
@@ -32,15 +32,15 @@ namespace EventPlusWebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Cadastrar([FromBody] TipoEventoDTO dto)
+        public async Task<IActionResult> Cadastrar([FromBody] TipoInstituicaoDTO dto)
         {
             try
             {
-                var TipoEvento = new TipoEvento { Titulo = dto.Titulo }; await _tipoEvento.Cadastrar(TipoEvento);
+                var Instituicao = new Instituicao { Cnpj = dto.Cnpj, NomeFantasia = dto.NomeFantasia, Endereco = dto.Endereco }; await _instituicao.Cadastrar(Instituicao);
 
                 return StatusCode(
                     201,
-                    "Tipo de evento cadastrado com sucesso " + TipoEvento.Titulo
+                    "Instituição cadastrada com sucesso " + Instituicao.NomeFantasia
 
                 );
             }
@@ -54,14 +54,14 @@ namespace EventPlusWebAPI.Controllers
         {
             try
             {
-                var tipoEventoBuscado = await _tipoEvento.BuscarPorId(id);
+                var instituicaoBuscada = await _instituicao.BuscarPorId(id);
 
-                if (tipoEventoBuscado == null)
+                if (instituicaoBuscada == null)
                 {
-                    return NotFound("Tipo de evento não encontrado.");
+                    return NotFound("Instituição não encontrada.");
                 }
 
-                return Ok(tipoEventoBuscado);
+                return Ok(instituicaoBuscada);
             }
             catch (Exception erro)
             {
@@ -72,15 +72,15 @@ namespace EventPlusWebAPI.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Deletar(Guid id)
         {
-            await _tipoEvento.Deletar(id);
+            await _instituicao.Deletar(id);
             return NoContent();
         }
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Atualizar(Guid id, [FromBody] TipoEvento tipoEvento)
+        public async Task<IActionResult> Atualizar(Guid id, [FromBody] Instituicao instituicao)
         {
             try
             {
-                await _tipoEvento.Atualizar(id, tipoEvento);
+                await _instituicao.Atualizar(id, instituicao);
                 return NoContent();
             }
             catch (Exception erro)

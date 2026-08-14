@@ -1,5 +1,4 @@
 ﻿using EventPlus.WebAPI.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace EventPlus.WebAPI.Interfaces
 {
@@ -9,11 +8,11 @@ namespace EventPlus.WebAPI.Interfaces
 
         Task<List<TipoUsuario>> Listar();
 
-        Task Atualizar(Guid id, ITipoUsuario TipoUsuario);
+        Task Atualizar(Guid id, TipoUsuario tipoUsuario);
 
         Task Deletar(Guid id);
 
-        Task<TipoUsuario?> BuscarPorId(Guid id);
-        Task Atualizar(Guid id, TipoUsuario tipoUsuarioBuscado);
+        Task<TipoUsuario> BuscarPorId(Guid id);
+
     }
 }

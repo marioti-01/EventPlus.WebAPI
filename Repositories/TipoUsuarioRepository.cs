@@ -8,24 +8,22 @@ namespace EventPlus.WebAPI.Repositories
     public class TipoUsuarioRepository : ITipoUsuario
     {
         private readonly EventContext _context;
-        public TipoUsuarioRepository(EventContext context) 
+
+        public TipoUsuarioRepository(EventContext context)
         {
             _context = context;
         }
-        public async Task Atualizar(Guid id, TipoUsuario TipoUsuario)
+
+        public async Task Atualizar(Guid id, TipoUsuario tipoUsuario)
         {
             var tipoUsuarioBuscado = await _context.TipoUsuario.FindAsync(id);
+
             if (tipoUsuarioBuscado != null)
             {
-                tipoUsuarioBuscado.Titulo = TipoUsuario.Titulo;
+                tipoUsuarioBuscado.Titulo = tipoUsuario.Titulo;
                 _context.TipoUsuario.Update(tipoUsuarioBuscado);
                 await _context.SaveChangesAsync();
             }
-        }
-
-        public Task Atualizar(Guid id, ITipoUsuario TipoUsuario)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<TipoUsuario?> BuscarPorId(Guid id)
@@ -36,6 +34,7 @@ namespace EventPlus.WebAPI.Repositories
         public async Task Cadastrar(TipoUsuario tipoUsuario)
         {
             await _context.TipoUsuario.AddAsync(tipoUsuario);
+
             await _context.SaveChangesAsync();
         }
 
@@ -53,7 +52,6 @@ namespace EventPlus.WebAPI.Repositories
         {
             return await _context.TipoUsuario.AsNoTracking().ToListAsync();
         }
-
 
     }
 }
