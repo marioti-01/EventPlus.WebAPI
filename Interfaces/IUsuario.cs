@@ -5,7 +5,7 @@ namespace EventPlus.WebAPI.Interfaces
 {
     public interface IUsuario
     {
-        Task Cadastrar(UsuarioDTO usuario);
+        Task Cadastrar(Usuario usuario);
 
         Task Atualizar(Guid id, Usuario usuario);
 

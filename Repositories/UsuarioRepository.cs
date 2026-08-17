@@ -3,10 +3,9 @@ using EventPlus.WebAPI.DTO;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
 using EventPlus.WebAPI.Utils;
-using EventPlusWebAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace EventPlus.Web.API.Repositories
+namespace EventPlus.WebAPI.Repositories
 {
     public class UsuarioRepository : IUsuario
     {
@@ -17,14 +16,39 @@ namespace EventPlus.Web.API.Repositories
             _context = context;
         }
 
-        public Task Atualizar(Guid id, Usuario usuario)
+        public async Task Atualizar(Guid id, Usuario usuario)
         {
-            throw new NotImplementedException();
+            var usuarioBuscado = await _context.Usuario.FindAsync(id);
+
+            if (usuarioBuscado != null)
+            {
+                usuarioBuscado.Nome = usuario.Nome;
+                usuarioBuscado.Email = usuario.Email;
+                usuarioBuscado.Senha = Criptografia.GerarHash(usuario.Senha);
+
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task<Usuario> BuscarPorEmailESenha(string email, string senha)
+        public async Task<Usuario> BuscarPorEmailESenha(string email, string senha)
         {
-            throw new NotImplementedException();
+            var usuario = await _context.Usuario
+                .Include(u => u.IdTipoUsuarioNavigation)
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (usuario == null)
+            {
+                return null;
+            }
+
+            bool senhaValida = Criptografia.CompararHash(senha, usuario.Senha);
+
+            if (!senhaValida)
+            {
+                return null;
+            }
+
+            return usuario;
         }
 
         public async Task<Usuario?> BuscarPorId(Guid id)
@@ -34,13 +58,13 @@ namespace EventPlus.Web.API.Repositories
                 .FirstOrDefaultAsync(x => x.IdUsuario == id);
         }
 
-        public async Task Cadastrar(UsuarioDTO dto)
+        public async Task Cadastrar(Usuario dto)
         {
             Usuario usuario = new Usuario
             {
                 Nome = dto.Nome,
                 Email = dto.Email,
-                Senha = Criptografia.GerarHash(dto.Senha),  
+                Senha = Criptografia.GerarHash(dto.Senha),
                 IdUsuario = Guid.NewGuid()
             };
 
@@ -48,9 +72,15 @@ namespace EventPlus.Web.API.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public Task Deletar(Guid id)
+        public async Task Deletar(Guid id)
         {
-            throw new NotImplementedException();
+            var usuarioBuscado = await _context.Usuario.FindAsync(id);
+
+            if (usuarioBuscado != null)
+            {
+                _context.Usuario.Remove(usuarioBuscado);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<List<Usuario>> Listar()

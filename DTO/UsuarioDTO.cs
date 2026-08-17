@@ -15,6 +15,8 @@ namespace EventPlus.WebAPI.DTO
         [Required(ErrorMessage = "O campo Senha é obrigatório.")]
         [StringLength(100, ErrorMessage = "O campo Senha deve ter no máximo 100 caracteres.")]
         public string Senha { get; set; } = string.Empty;
+
+        public Guid IdTipoUsuario { get; set; }
         public Guid IdUsuario { get; }
 
 }

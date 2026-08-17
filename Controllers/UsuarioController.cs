@@ -1,7 +1,6 @@
 ﻿using EventPlus.WebAPI.DTO;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventPlus.WebAPI.Controllers
@@ -10,8 +9,8 @@ namespace EventPlus.WebAPI.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
-
         private readonly IUsuario _usuario;
+
         public UsuarioController(IUsuario usuario)
         {
             _usuario = usuario;
@@ -22,13 +21,12 @@ namespace EventPlus.WebAPI.Controllers
         {
             try
             {
-                var usuario = new UsuarioDTO
+                var usuario = new Usuario
                 {
                     Nome = dto.Nome,
                     Email = dto.Email,
                     Senha = dto.Senha,
-
-
+                    IdTipoUsuario = dto.IdTipoUsuario
                 };
 
                 await _usuario.Cadastrar(usuario);
@@ -40,8 +38,24 @@ namespace EventPlus.WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Listar()
+        {
+            try
+            {
+                var usuarios = await _usuario.Listar();
+
+                return Ok(usuarios);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro.Message);
+            }
+        }
+
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> Listar(Guid id)
+        public async Task<IActionResult> BuscarPorId(Guid id)
         {
             try
             {
@@ -53,6 +67,44 @@ namespace EventPlus.WebAPI.Controllers
                 }
 
                 return Ok(usuarioBuscado);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro.Message);
+            }
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Atualizar(Guid id, [FromBody] UsuarioDTO DTO)
+        {
+            try
+            {
+                var usuario = new Usuario
+                {
+                    IdUsuario = id,
+                    Nome = DTO.Nome,
+                    Email = DTO.Email,
+                    Senha = DTO.Senha
+                };
+
+                await _usuario.Atualizar(id, usuario);
+
+                return Ok("Usuário atualizado com sucesso.");
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro.Message);
+            }
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Deletar(Guid id)
+        {
+            try
+            {
+                await _usuario.Deletar(id);
+
+                return NoContent();
             }
             catch (Exception erro)
             {
